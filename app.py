@@ -58,4 +58,7 @@ def download_csv():
 
 
 if __name__ == '__main__':
-  app.run(debug=True, port=5000)
+    # Obter a porta designada pelo Railway ou usar a porta 5000 para desenvolvimento local
+    port = int(os.environ.get("PORT", 5000))
+    # Executar a aplicação Flask
+    app.run(host='0.0.0.0', port=port)
