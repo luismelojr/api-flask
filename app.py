@@ -19,9 +19,9 @@ def webhook():
   dateObj = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
   formatedDate = dateObj.strftime('%d/%m/%Y %H:%M:%S')
 
-  if "s.whatsapp.net" not in contact:
+  if 'g.us' not in contact and 's.whatsapp.net' not in contact:
     return jsonify({'message': 'Contato não é um número de WhatsApp!', 'data': data}), 400
-  
+
   csv_file = get_csv_filename()
 
   try:
@@ -53,9 +53,6 @@ def download_csv():
         return send_file(csv_file, as_attachment=True)
 
     return jsonify({'error': 'Arquivo CSV não encontrado.'}), 404
-
-  
-
 
 if __name__ == '__main__':
     # Obter a porta designada pelo Railway ou usar a porta 5000 para desenvolvimento local
