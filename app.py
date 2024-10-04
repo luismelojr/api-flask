@@ -54,6 +54,38 @@ def download_csv():
 
     return jsonify({'error': 'Arquivo CSV não encontrado.'}), 404
 
+@app.route('/list_csv', methods=['GET'])
+def list_csv():
+    files = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith('.csv')]
+    return jsonify({'files': files})
+
+@app.route('/add_row', methods=['POST'])
+def add_row():
+    data = request.json
+    contact = data['contact']
+    name = data['name']
+    message = data['message']
+    date = data['date']
+
+    dateObj = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+    formatedDate = dateObj.strftime('%d/%m/%Y %H:%M:%S')
+
+    csv_file = get_csv_filename()
+
+    try:
+        if not os.path.exists(csv_file):
+            with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Contato', 'Nome', 'Mensagem', 'Data'])
+
+        with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow([contact, name, message, formatedDate])
+
+        return jsonify({'message': 'Dados salvos com sucesso!'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Erro ao salvar os dados!'}), 500
+
 if __name__ == '__main__':
     # Obter a porta designada pelo Railway ou usar a porta 5000 para desenvolvimento local
     port = int(os.environ.get("PORT", 5000))
